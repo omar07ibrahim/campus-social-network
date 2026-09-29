@@ -6,7 +6,7 @@
 CampusConnect (placeholder — rename if the team prefers)
 
 ## Problem
-Students at [university name] don't have a single place to share campus-specific updates
+Students at MBZUAI don't have a single place to share campus-specific updates
 (events, club posts, study groups, lost & found) — general social media is too broad and
 noisy, and official channels (email, LMS announcements) are one-way and slow.
 
@@ -31,6 +31,5 @@ noisy, and official channels (email, LMS announcements) are one-way and slow.
 - No production-grade styling/UX
 
 ## Open questions for the team
-- Confirm university/campus context (real or fictional?)
 - Confirm the one AI feature to commit to for the ADR
 - Confirm moderation policy: who can remove a post, appeals?
