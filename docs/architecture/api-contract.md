@@ -24,14 +24,15 @@ Create a post.
 }
 ```
 
-**Response — 422 Unprocessable Entity** (validation error, FastAPI default shape)
+**Response — 422 Unprocessable Entity** (validation error, FastAPI/Pydantic v2 default shape)
 ```json
 {
   "detail": [
     {
+      "type": "missing",
       "loc": ["body", "content"],
-      "msg": "field required",
-      "type": "value_error.missing"
+      "msg": "Field required",
+      "input": { "author": "Omar" }
     }
   ]
 }
