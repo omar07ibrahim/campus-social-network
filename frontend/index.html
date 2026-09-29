@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Campus Social Network - POC</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    form { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+    input, textarea { padding: 0.5rem; font: inherit; }
+    button { padding: 0.5rem; font: inherit; cursor: pointer; }
+    .post { border: 1px solid #ccc; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.5rem; }
+    .post .meta { color: #666; font-size: 0.85rem; }
+    #error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Campus Social Network — Proof of Concept</h1>
+
+  <form id="post-form">
+    <input id="author" placeholder="Your name" required maxlength="100" />
+    <textarea id="content" placeholder="What's happening on campus?" required maxlength="1000"></textarea>
+    <button type="submit">Post</button>
+  </form>
+
+  <p id="error"></p>
+  <div id="posts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
