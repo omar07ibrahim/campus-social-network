@@ -1,9 +1,10 @@
-# Project Scope — DRAFT (for team review, lead: Salama)
+# Project Scope
 
-> Status: draft proposal, not yet agreed. Salama leads 1.1–1.3 and should edit/replace this directly.
+> Status: agreed by Omar, Salama, Makar (2026-09-29). Aro to review 1.4–1.5 against this.
+> Salama leads 1.1–1.3 and owns further edits to this file.
 
 ## Product name
-CampusConnect (placeholder — rename if the team prefers)
+CampusConnect
 
 ## Problem
 Students at MBZUAI don't have a single place to share campus-specific updates
@@ -15,8 +16,9 @@ noisy, and official channels (email, LMS announcements) are one-way and slow.
 - Create/view text posts on a shared campus feed
 - Comment on posts
 - Basic visibility control (public to campus vs. specific groups/clubs)
-- Basic moderation (report a post, admin remove)
-- One AI feature (e.g. auto-summarizing long threads, or flagging spam) — owner: Aro (ADR)
+- Moderation: campus moderators can hide/remove any post (report → hide → decision record, ADR-01);
+  group officers can additionally remove posts within their own group
+- AI feature: summarize long comment threads into a short digest (ADR-02, owner: Aro)
 
 ## Future features (out of scope for A1/A2, mentioned for context only)
 - Real-time notifications (WebSockets)
@@ -31,5 +33,5 @@ noisy, and official channels (email, LMS announcements) are one-way and slow.
 - No production-grade styling/UX
 
 ## Open questions for the team
-- Confirm the one AI feature to commit to for the ADR
-- Confirm moderation policy: who can remove a post, appeals?
+- Appeals process for moderation decisions (Salama/ADR-01)
+- Aro to confirm this scope against 1.4–1.5 user stories and traceability matrix
