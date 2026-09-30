@@ -19,12 +19,32 @@ end-to-end: browser form → FastAPI backend → validation → response → dis
 backend/    FastAPI proof-of-concept API (in-memory, no DB)
 frontend/   Plain HTML/JS browser form, no build step
 docs/
-  requirements/      scope, stakeholders, user stories, traceability (Salama/Aro)
-  architecture/       C4, sequence diagram, ER diagram, ADRs (Makar/Omar)
+  requirements/      scope, stakeholders, FR/NFR, user stories, traceability, review (Salama/Aro)
+  architecture/       C4, sequence diagram, ER diagram, API contract, ADRs (Makar/Omar)
     adr/              4 architecture decision records, one per member
-    diagrams/         editable diagram sources
+    diagrams/         editable diagram sources (Mermaid)
   project-management/ responsibilities, workflow, risks, timeline (Aro)
+  demo-script.md       3-minute demo walkthrough (Omar)
 ```
+
+See `docs/architecture/repository-structure.md` for the full breakdown (2.5) and the
+Assignment 2 target layout.
+
+## Document map (for the oral exam)
+
+| Section | File |
+|---|---|
+| 1.1 Stakeholders & scope | `docs/requirements/stakeholders.md`, `scope.md` |
+| 1.2 Functional requirements | `docs/requirements/functional-requirements.md` |
+| 1.3 Non-functional requirements + driver ranking (2.1) | `docs/requirements/non-functional-requirements.md` |
+| 1.4–1.5 User stories, traceability, review | `docs/requirements/user-stories.md`, `requirements-review.md` |
+| 2.2–2.3 C4, sequence diagram | `docs/architecture/diagrams/` |
+| 2.4 API contract | `docs/architecture/api-contract.md` |
+| 2.5 Repository structure | `docs/architecture/repository-structure.md` |
+| 2.6 ER diagram | `docs/architecture/diagrams/er-diagram.md` |
+| 2.7 ADRs | `docs/architecture/adr/` |
+| Section 3 Project management | `docs/project-management/README.md` |
+| Demo | `docs/demo-script.md` |
 
 ## Running the proof of concept
 

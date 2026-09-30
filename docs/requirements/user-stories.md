@@ -44,9 +44,19 @@ Acceptance criteria:
 
 ## Traceability matrix
 
-| Story | Functional req. | ADR | POC demo | Status |
-|---|---|---|---|---|
-| US-1 Create post | FR: create post | — | `POST /posts`, frontend form | Implemented in POC |
-| US-2 View feed | FR: view feed | — | `GET /posts`, frontend list | Implemented in POC |
-| US-3 Moderator hides post | FR: moderation | ADR-01 | not in POC | Planned for A2 |
-| US-4 Officer moderates group | FR: group moderation | ADR-01 | not in POC | Planned for A2 |
+Full requirement definitions: `functional-requirements.md`, `non-functional-requirements.md`.
+Stakeholder sources: `stakeholders.md`.
+
+| Story | Functional req. | NFR | ADR | POC demo / test | Status |
+|---|---|---|---|---|---|
+| US-1 Create post | FR-1 | NFR-1 | — | `POST /posts`, frontend form, `test_create_post` | Implemented in POC |
+| US-2 View feed | FR-2 | NFR-1 | — | `GET /posts`, frontend list, `test_list_posts_newest_first` | Implemented in POC |
+| US-3 Moderator hides post | FR-5, FR-10 | NFR-4, NFR-5 | ADR-01 | not in POC | Planned for A2 |
+| US-4 Officer moderates group | FR-6 | NFR-5 | ADR-01 | not in POC | Planned for A2 |
+| (unstoried) Draft hand-off | FR-7 | NFR-8 | ADR-04 | not in POC | Planned for A2 |
+| (unstoried) Thread summary | FR-8 | — | ADR-02 | not in POC | Planned for A2 |
+| (unstoried) Data persistence | — | NFR-2, NFR-5, NFR-7 | ADR-03 | not in POC | Planned for A2 |
+
+**Gaps flagged by this matrix:** FR-3 (comment), FR-4 (audience setting), and FR-9 (group
+verification) have no user story yet — Aro to add before the final report, or explicitly
+mark as backlog for Assignment 2 if not user-facing enough to need one.
