@@ -4,13 +4,16 @@ const form = document.getElementById("post-form");
 const errorEl = document.getElementById("error");
 const postsEl = document.getElementById("posts");
 
+// textContent, not innerHTML: post text is user input and must never run as HTML/script.
 function renderPost(post) {
   const div = document.createElement("div");
   div.className = "post";
-  div.innerHTML = `
-    <div class="meta">${post.author} · ${new Date(post.created_at).toLocaleString()}</div>
-    <div>${post.content}</div>
-  `;
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent = `${post.author} · ${new Date(post.created_at).toLocaleString()}`;
+  const body = document.createElement("div");
+  body.textContent = post.content;
+  div.append(meta, body);
   return div;
 }
 

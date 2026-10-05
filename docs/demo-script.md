@@ -1,25 +1,26 @@
 # Demo Script (≤ 3 minutes)
 
-> Lead: Omar (setup + demo prep, per assignment brief).
+> Lead: Omar. Rehearse with a timer; any member should be able to run it.
 
-## Before the demo
-1. `cd backend && source .venv/bin/activate && uvicorn main:app --reload --port 8000`
-2. `cd frontend && python3 -m http.server 5500`
-3. Open http://localhost:5500 in a browser, http://localhost:8000/docs in another tab
-   (optional, shows the live API contract).
+## Before the demo (not timed)
+1. Terminal 1: `cd backend && source .venv/bin/activate && uvicorn main:app --port 8000`
+2. Terminal 2: `cd frontend && python3 -m http.server 5500`
+3. Browser tab 1: http://localhost:5500 — tab 2: http://localhost:8000/docs
+4. Restart the backend just before starting so the feed is empty.
 
-## Script (target: under 3 minutes)
+## Script
 
-| Time | Action | What it shows |
-|---|---|---|
-| 0:00–0:20 | State the problem in one sentence (from `scope.md`) | Grounds the demo in the requirement, not just "look, code" |
-| 0:20–0:40 | Show the empty feed at http://localhost:5500 | `GET /posts` on load, matches `api-contract.md` |
-| 0:40–1:10 | Fill the form, submit a valid post | `POST /posts` → 201 → post appears at top — full flow: browser form → backend validation → response → display (assignment's required demo flow) |
-| 1:10–1:30 | Submit an empty/invalid post | 422 validation error shown inline — contract's error case, not just the happy path |
-| 1:30–1:50 | Open http://localhost:8000/docs briefly | Shows the contract is live/enforced by the backend, not just described in a doc |
-| 1:50–2:30 | One sentence each on what's *not* in the POC and why (auth, DB, moderation, AI) | Sets up the Assignment 2 pitch — ties to ADR-01/02/03/04 |
-| 2:30–3:00 | One sentence on Assignment 2 direction (React, WebSockets, Postgres, LLM summary) | Closes on the architecture, not just the POC |
+| Time | Who speaks | Action | What it shows |
+|---|---|---|---|
+| 0:00–0:20 | Salama | One sentence on the problem and product (`scope.md`) | Why the product exists |
+| 0:20–0:35 | Omar | Show the empty feed | `GET /posts` → `[]`, US-2 "empty feed, no error" |
+| 0:35–1:05 | Omar | Post as "Salama": "Study group for AI1220 at 6pm" | `POST /posts` → 201 → shown at the top: form → backend validation → response → display |
+| 1:05–1:20 | Omar | Post a second one, show newest-first order | US-2 ordering |
+| 1:20–1:45 | Makar | Submit spaces only as content | 422 → "content: String should have at least 1 character"; nothing stored |
+| 1:45–2:10 | Makar | Tab 2: `/docs`, open `POST /posts` schema | Running contract = `api-contract.md` Part A |
+| 2:10–2:40 | Aro | What is simplified and why (`docs/poc.md` table) | Explains POC vs. architecture |
+| 2:40–3:00 | Aro | One sentence on Assignment 2: React, WebSockets, Postgres, cited AI summaries | Links to ADRs |
 
-## Fallback if live demo breaks
-- `backend/test_main.py` passing (`pytest -q`) is the backup evidence the contract holds,
-  screenshot it before the exam if live demo access is uncertain.
+## If the live demo fails
+- Run `cd backend && pytest -q` (8 passed) as evidence the contract holds.
+- Keep screenshots of the working flow on the laptop as a last resort.

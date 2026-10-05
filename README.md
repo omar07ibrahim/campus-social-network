@@ -1,90 +1,80 @@
-# Campus Social Network — Proof of Concept
+# CampusConnect — Campus Social Network
 
-MBZUAI campus social network, Assignment 1 (Requirements & Architecture) proof of concept.
-Full product is built in Assignment 2 — this repo only demonstrates the "create a post" flow
-end-to-end: browser form → FastAPI backend → validation → response → display.
+AI1220 Assignment 1 (Requirements Engineering, Architecture & Proof of Concept), MBZUAI.
+The full product is built in Assignment 2. This repository contains the report, the
+editable diagram sources and a proof of concept of one interaction: **creating a campus post**
+(browser form → FastAPI backend → validation → response → display).
+
+**The submitted report is [`Report.pdf`](Report.pdf).**
 
 ## Team
 
-| Member | Role |
-|---|---|
-| Salama | Requirements & product scope lead |
-| Aro | Planning, validation & report lead |
-| Makar | Backend & data architecture lead |
-| Omar | Frontend & integration lead |
-
-## Repo structure
-
-```
-backend/    FastAPI proof-of-concept API (in-memory, no DB)
-frontend/   Plain HTML/JS browser form, no build step
-docs/
-  requirements/      scope, stakeholders, FR/NFR, user stories, traceability, review (Salama/Aro)
-  architecture/       C4, sequence diagram, ER diagram, API contract, ADRs (Makar/Omar)
-    adr/              4 architecture decision records, one per member
-    diagrams/         editable diagram sources (Mermaid)
-  project-management/ responsibilities, workflow, risks, timeline (Aro)
-  demo-script.md       3-minute demo walkthrough (Omar)
-```
-
-See `docs/architecture/repository-structure.md` for the full breakdown (2.5) and the
-Assignment 2 target layout.
-
-## Report PDF
-
-`Report.pdf` (repo root) is the single assembled report required by the submission
-checklist — every section below, in order, with diagrams rendered as images. It's built
-from the same Markdown files listed in the table below (single source of truth per section,
-not duplicated content). Regenerate after editing any section:
-
-```bash
-python3 -m venv .venv && source .venv/bin/activate   # any venv, doesn't need to be backend's
-pip install -r docs/report-requirements.txt && playwright install chromium
-cd docs && python build_report.py
-```
-
-## Document map (for the oral exam)
-
-| Section | File |
-|---|---|
-| 1.1 Stakeholders & scope | `docs/requirements/stakeholders.md`, `scope.md` |
-| 1.2 Functional requirements | `docs/requirements/functional-requirements.md` |
-| 1.3 Non-functional requirements + driver ranking (2.1) | `docs/requirements/non-functional-requirements.md` |
-| 1.4–1.5 User stories, traceability, review | `docs/requirements/user-stories.md`, `requirements-review.md` |
-| 2.2–2.3 C4, sequence diagram | `docs/architecture/diagrams/` |
-| 2.4 API contract | `docs/architecture/api-contract.md` |
-| 2.5 Repository structure | `docs/architecture/repository-structure.md` |
-| 2.6 ER diagram | `docs/architecture/diagrams/er-diagram.md` |
-| 2.7 ADRs | `docs/architecture/adr/` |
-| Section 3 Project management | `docs/project-management/README.md` |
-| Demo | `docs/demo-script.md` |
-| **Full report (all of the above, as one PDF)** | `Report.pdf` |
+| Member | GitHub | Lead role |
+|---|---|---|
+| Salama Aldhaheri | @SalamaAldhaheri | Requirements & product scope (1.1–1.3, 2.1, ADR-01) |
+| Aro Dana | @arokurd | Planning, validation & report (1.4–1.5, Section 3, ADR-02, report assembly) |
+| Makar Ulesov | @triplepiner | Backend & data architecture (POC backend, 2.4–2.6, component diagram, ADR-03) |
+| Omar Ibrahim | @omar07ibrahim | Frontend & integration (POC frontend, 2.2–2.3, README, demo, ADR-04) |
 
 ## Running the proof of concept
 
-### Backend
+Requires Python 3.10+.
+
+### Backend (terminal 1)
 ```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+uvicorn main:app --port 8000
 ```
-API docs at http://localhost:8000/docs
+Interactive API docs: http://localhost:8000/docs
 
-### Frontend
+### Frontend (terminal 2)
 ```bash
 cd frontend
 python3 -m http.server 5500
 ```
-Open http://localhost:5500 in a browser. The form posts to `http://localhost:8000`.
+Open http://localhost:5500. The page calls the backend at `http://localhost:8000`.
+
+### Tests
+```bash
+cd backend && source .venv/bin/activate && pytest -q     # 8 passed
+```
 
 ## Proof-of-concept simplifications
+Full table with reasons: [`docs/poc.md`](docs/poc.md).
+- No authentication — `author` is free text (A2: university sign-in, roles).
+- No database — posts live in memory and disappear when the backend restarts (A2: PostgreSQL, ADR-03).
+- Plain HTML/JS instead of React with rich text.
+- No groups, visibility, comments, moderation, drafts, live updates or AI summaries.
+- CORS allows any origin, for the local two-port demo only.
 
-- No real authentication — author name is free text
-- No database — posts live in memory and reset on backend restart
-- No AI integration — planned in the architecture, not implemented here
-- CORS is wide open (`*`) for local demo purposes only
+## Where each report section lives
 
-## Status
+| Section | File |
+|---|---|
+| Product scope | `docs/requirements/scope.md` |
+| 1.1 Stakeholders | `docs/requirements/stakeholders.md` |
+| 1.2 Functional requirements | `docs/requirements/functional-requirements.md` |
+| 1.3 Non-functional requirements, 2.1 drivers | `docs/requirements/non-functional-requirements.md` |
+| 1.4 User stories | `docs/requirements/user-stories.md` |
+| 1.5 Validation & traceability | `docs/requirements/requirements-review.md` |
+| 2.2 C4 context / container / component | `docs/architecture/diagrams/c4-*.md` |
+| 2.3 Behaviour & design decisions | `docs/architecture/behaviour-and-design.md` |
+| 2.3 Collaborative sequence diagram | `docs/architecture/diagrams/sequence-draft-handoff.md` |
+| 2.4 Interfaces | `docs/architecture/api-contract.md` |
+| 2.5 Repository structure | `docs/architecture/repository-structure.md` |
+| 2.6 Data model | `docs/architecture/diagrams/er-diagram.md` |
+| 2.7 ADRs | `docs/architecture/adr/` |
+| 3 Project management | `docs/project-management/README.md` |
+| 4 Proof of concept | `docs/poc.md`, `docs/architecture/diagrams/sequence-create-post.md`, `docs/demo-script.md` |
 
-Early skeleton. Requirements, diagrams, and ADRs are drafts under `docs/` pending team review.
+Diagrams are Mermaid source inside these Markdown files (editable as text, rendered by
+GitHub and in the PDF).
+
+## Rebuilding Report.pdf
+```bash
+python3 -m venv .venv-report && source .venv-report/bin/activate
+pip install -r docs/report-requirements.txt && playwright install chromium
+python docs/build_report.py
+```
