@@ -1,37 +1,46 @@
-# Project Scope
+# Product Scope
 
-> Status: agreed by Omar, Salama, Makar (2026-09-29). Aro to review 1.4–1.5 against this.
-> Salama leads 1.1–1.3 and owns further edits to this file.
+> Lead: Salama. Agreed by the whole team on 2026-09-29 (Step 1 of the brief), revised
+> 2026-10-05 after the requirements review (see `requirements-review.md`, R-2).
 
 ## Product name
-CampusConnect
+**CampusConnect** — a social network for the MBZUAI community.
 
 ## Problem
-Students at MBZUAI don't have a single place to share campus-specific updates
-(events, club posts, study groups, lost & found) — general social media is too broad and
-noisy, and official channels (email, LMS announcements) are one-way and slow.
+Students at MBZUAI have no single place to share campus-specific updates (events, club
+posts, study groups, lost & found). General social media is too broad and noisy; official
+channels (email, LMS announcements) are one-way and slow. Student groups prepare
+announcements in chat apps and copy them by hand, so drafts get lost or overwritten, and
+there is no shared, accountable way to deal with harmful posts.
 
-## First-release scope (Assignment 2 target)
-- Student accounts, campus-verified (e.g. university email)
-- Create/view text posts on a shared campus feed
-- Comment on posts
-- Basic visibility control (public to campus vs. specific groups/clubs)
-- Moderation: campus moderators can hide/remove any post (report → hide → decision record, ADR-01);
-  group officers can additionally remove posts within their own group
-- AI feature: summarize long comment threads into a short digest (ADR-02, owner: Aro)
+## First release (built in Assignment 2)
+- **Identity:** sign-in restricted to university email accounts (mocked SSO in development).
+- **Communities:** students join groups; group officers manage their group; Student Affairs
+  marks official groups as verified.
+- **Publishing:** text posts with rich-text formatting (React editor) to the campus feed or a group.
+- **Collaboration:** group officers co-edit and hand off draft announcements before
+  publishing, with conflict detection (ADR-04).
+- **Audience control:** each post is campus-wide or group-only (ADR-01).
+- **Interaction:** comments on posts; feed and comments update live over WebSockets.
+- **Moderation:** report → hide → recorded decision → one appeal to a second moderator (ADR-01).
+- **AI feature:** on-request summary of long comment threads, with every summary point
+  linked back to the comments it came from (ADR-02).
 
-## Future features (out of scope for A1/A2, mentioned for context only)
-- Real-time notifications (WebSockets)
-- Rich text / media-heavy posts (React rich text editor)
-- Direct messaging
-- Events/calendar integration
+## Later releases (out of the first release, may come later)
+- Events/calendar with RSVPs
+- Image and file attachments
+- Notifications by email or push
+- Search across posts and groups
+- Mobile apps
 
-## Explicitly excluded (this proof of concept, Assignment 1)
-- No real authentication (mock/fictional users)
-- No persistent database (in-memory only)
-- No AI integration wired up (planned in architecture only)
-- No production-grade styling/UX
+## Outside the product's scope
+- Direct/private messaging
+- Accounts for people outside the university
+- Payments or marketplace features
+- Video hosting
 
-## Open questions for the team
-- Appeals process for moderation decisions (Salama/ADR-01)
-- Aro to confirm this scope against 1.4–1.5 user stories and traceability matrix
+## Excluded from the Assignment 1 proof of concept
+- No real authentication (author is a free-text name)
+- No database (in-memory list, cleared on restart)
+- No groups, comments, moderation, drafts, live updates or AI
+- Plain HTML/JS instead of React; no production styling

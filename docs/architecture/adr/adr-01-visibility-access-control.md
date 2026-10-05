@@ -1,48 +1,61 @@
 # ADR-01: Audience Visibility and Access-Control Policy
 
-- Status: draft (owner Salama — final wording still to review)
-- Owner: Salama
-- Date: 2026-10-05
+- **Status:** Accepted
+- **Owner:** Salama
+- **Date:** 2026-10-05 (first draft 2026-09-29)
+- **Feasibility review:** Makar (backend), Omar (frontend) — buildable in FastAPI as one
+  policy module; no objections.
+- **Related:** FR-4, FR-5, FR-6, FR-9, FR-12, FR-14, NFR-7, NFR-10, NFR-12, US-3, US-4, US-6, US-7, US-10
 
 ## Context
-Who can see a post, who can restrict its audience, and what visibility levels does the
-platform need? Also covers: audience setting at post-creation (US-6/FR-4), group
-verification badges (US-7/FR-9), and the appeals process for moderation decisions (US-3).
+Students want posts to reach either the whole campus or only their group. Moderators need
+to remove harmful content, group officers want to manage their own group, and authors need
+a fair way to contest a decision. The rules must hold everywhere content leaves the server —
+REST responses, WebSocket events and text sent to the LLM — otherwise group-only posts leak.
 
-## Visibility levels
-- **Campus-wide** — visible to every verified student (default).
-- **Group-only** — visible only to members of the posting group (US-6).
-- No "private"/DM-style visibility — explicitly out of scope (see `scope.md` exclusions).
+## Options considered
 
-## Alternatives considered — moderation authority
-1. Moderators only (centralized, slower, consistent)
-2. Moderators + group officers for their own group (chosen — faster response, some inconsistency risk)
-3. Fully decentralized (any group member can remove) — rejected, too easy to abuse
+### Visibility levels
+1. Campus-wide only — simplest, but groups cannot share internal announcements.
+2. **Campus-wide or group-only per post** (chosen) — covers the customer request with two rules.
+3. Fine-grained lists (named users, friends-of-friends) — expensive to check on every
+   request and every live event, and not requested by any stakeholder.
 
-## Alternatives considered — appeals process
-1. No appeals (moderator decision is final) — rejected: no recourse for a wrongly hidden
-   post, conflicts with S1's trust in the platform.
-2. **Appeal to a second moderator, decision logged** (chosen) — the original author can
-   request review; a different moderator (not the one who hid it) reviews the retained
-   content + original decision record (`MODERATION_RECORD`, ADR-03) and either restores or
-   upholds. Keeps a second set of eyes without needing a full committee process.
-3. Committee/admin panel review — rejected for Assignment 2 scope, too heavy for pilot scale
-   (NFR-2: 5,000 students).
+### Who can moderate
+1. Moderators only — consistent, but slow for large groups.
+2. **Moderators anywhere + officers inside their own group** (chosen) — faster response,
+   small blast radius if an officer account is misused.
+3. Any group member can remove posts — easy to abuse (S5).
+
+### Appeals
+1. No appeals — no recourse for a wrongly hidden post; hurts S1's trust.
+2. **One appeal, decided by a different moderator** (chosen) — second pair of eyes,
+   cheap enough for pilot scale.
+3. Committee/admin panel — too heavy for a pilot.
 
 ## Decision
-- Moderation authority: moderators + group officers for their own group.
-- Appeals: author can request review; a second moderator (not the original) decides, using
-  the retained content and decision record. The appeal outcome is itself recorded.
-- Group verification (US-7/FR-9): a Student Affairs role (separate from "moderator") grants
-  the verified badge; this ADR owns the policy, FR-9's exact UI/workflow is Assignment 2
-  implementation detail, not a separate ADR (per `user-stories.md` traceability note).
+- Every post has `visibility` = `campus` or `group`. A `group` post is visible only to
+  members of its group (`GROUP_MEMBERSHIP`). Default is `campus`.
+- All checks happen in one backend component (**Access Policy**, see
+  `diagrams/c4-component.md`) called by the REST routers, the WebSocket hub before each
+  broadcast, and the Summary service before building an LLM prompt. The frontend only hides
+  buttons; it never decides access.
+- Roles: `student` (default), `moderator`, `student_affairs` (global, on `USER.role`);
+  `officer` (per group, on `GROUP_MEMBERSHIP.role`).
+- Moderators can hide any post. Officers can remove posts in their own group only.
+  Every hide/remove writes a `MODERATION_RECORD` in the same transaction as the post update.
+- The author may appeal once. The appeal is assigned to a moderator other than the one who
+  decided; the outcome (`restored` / `upheld`) is stored on the same record.
+- Only `student_affairs` can verify a group (FR-9). Role grants are recorded in the audit log.
 
 ## Consequences
-- `MODERATION_RECORD` (ER diagram) needs an `appeal_status` and `appeal_decided_by` field,
-  distinct from the original `moderator_id` — a schema detail Makar should carry into ADR-03's
-  implementation, not just this ADR's text.
-- Two-moderator appeal review assumes campus has ≥2 active moderators at any time — a
-  staffing assumption, not a technical one; flagged here so project management (risks) can
-  track it if it turns out false at pilot scale.
-- Officers' power is scoped to their own group only — an officer cannot moderate another
-  group's posts, limiting blast radius of a compromised/malicious officer account.
+- **Positive:** One place to test authorization (NFR-7, NFR-10): a role × endpoint test
+  matrix covers REST and WebSocket paths.
+- **Positive:** The ER model carries the policy directly (`visibility`, membership role,
+  appeal fields on `MODERATION_RECORD`), so the database can enforce part of it with constraints.
+- **Negative:** Every live event must be filtered per recipient, which costs CPU on the hub;
+  acceptable at pilot scale (NFR-2), revisit if broadcasts become slow.
+- **Negative:** Appeals assume at least two active moderators (risk R6); fallback is review
+  by Student Affairs.
+- **Open:** How the first `student_affairs` account is created — planned as a seed/admin
+  script, not an API endpoint (open question Q-2).
