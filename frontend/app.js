@@ -14,6 +14,16 @@ function renderPost(post) {
   return div;
 }
 
+function formatValidationError(detail) {
+  if (!Array.isArray(detail)) return "Something went wrong. Please try again.";
+  return detail
+    .map((e) => {
+      const field = Array.isArray(e.loc) ? e.loc[e.loc.length - 1] : "field";
+      return `${field}: ${e.msg}`;
+    })
+    .join("; ");
+}
+
 async function loadPosts() {
   const res = await fetch(`${API_BASE}/posts`);
   const posts = await res.json();
@@ -36,7 +46,7 @@ form.addEventListener("submit", async (e) => {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body.detail ? JSON.stringify(body.detail) : `Request failed (${res.status})`);
+      throw new Error(body.detail ? formatValidationError(body.detail) : `Request failed (${res.status})`);
     }
     const post = await res.json();
     postsEl.prepend(renderPost(post));
