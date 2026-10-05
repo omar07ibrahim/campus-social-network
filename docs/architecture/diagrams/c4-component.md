@@ -6,48 +6,38 @@
 > decomposing.
 
 ```mermaid
-C4Component
-    title Backend API (FastAPI) — Components
+flowchart LR
+    spa["<b>Web App</b><br/>[Container: React]<br/>Feed, editor, drafts, moderation UI"]
+    idp["<b>University sign-in</b><br/>[External system: OIDC]"]
+    llm["<b>LLM Provider</b><br/>[External system]"]
+    db[("<b>Database</b><br/>[Container: PostgreSQL]")]
 
-    Container(spa, "Web App", "React", "Feed, editor, drafts, moderation UI")
-    ContainerDb(db, "Database", "PostgreSQL", "All persistent data")
-    System_Ext(idp, "University sign-in", "OIDC (mock in dev)")
-    System_Ext(llm, "LLM Provider", "Text summarisation")
+    subgraph api["Backend API — FastAPI container"]
+        direction LR
+        auth["<b>Auth</b><br/>[FastAPI dependency]<br/>Session cookie, current user"]
+        subgraph routers[" "]
+            direction TB
+            posts["<b>Posts & Comments router</b><br/>Create/list, Pydantic validation"]
+            groups["<b>Groups router</b><br/>Membership, officers, verification"]
+            drafts["<b>Drafts service</b><br/>Versioned saves, publish (ADR-04)"]
+            moderation["<b>Moderation service</b><br/>Reports, hide, appeals, audit"]
+            summary["<b>Summary service</b><br/>Visible comments, citation check (ADR-02)"]
+        end
+        hub["<b>Realtime hub</b><br/>[WebSocket]<br/>Subscriptions, presence, per-recipient filtering"]
+        policy["<b>Access Policy</b><br/>[Python module]<br/>All visibility and role checks (ADR-01)"]
+        repo["<b>Repositories</b><br/>[SQLModel]<br/>Queries, transactions (ADR-03)"]
+    end
 
-    Container_Boundary(api, "Backend API") {
-        Component(auth, "Auth", "FastAPI dependency", "Sign-in callback, session cookie, current user")
-        Component(policy, "Access Policy", "Python module", "Single place for visibility and role checks (ADR-01)")
-        Component(posts, "Posts & Comments router", "FastAPI router", "Create/list posts and comments, validation")
-        Component(groups, "Groups router", "FastAPI router", "Membership, officers, verification")
-        Component(drafts, "Drafts service", "FastAPI router + service", "Versioned saves, publish (ADR-04)")
-        Component(moderation, "Moderation service", "FastAPI router + service", "Reports, hide/remove, appeals, audit events")
-        Component(summary, "Summary service", "Service + adapter", "Builds prompt from visible comments, checks citations (ADR-02)")
-        Component(hub, "Realtime hub", "FastAPI WebSocket", "Subscriptions, presence, per-recipient event filtering")
-        Component(repo, "Repositories", "SQLModel", "Queries and transactions (ADR-03)")
-    }
-
-    Rel(spa, auth, "Signs in", "HTTPS redirect")
-    Rel(spa, posts, "Calls", "HTTPS/JSON")
-    Rel(spa, drafts, "Saves drafts", "HTTPS/JSON")
-    Rel(spa, moderation, "Reports, hides, appeals", "HTTPS/JSON")
-    Rel(spa, summary, "Requests summary", "HTTPS/JSON")
-    Rel(spa, hub, "Subscribes", "WebSocket")
-    Rel(auth, idp, "Verifies identity", "OIDC")
-    Rel(posts, policy, "Checks access")
-    Rel(drafts, policy, "Checks officer role")
-    Rel(moderation, policy, "Checks role")
-    Rel(summary, policy, "Filters visible comments")
-    Rel(hub, policy, "Filters each event per recipient")
-    Rel(posts, hub, "Publishes events")
-    Rel(drafts, hub, "Publishes events")
-    Rel(moderation, hub, "Publishes events")
-    Rel(summary, llm, "summarize()", "HTTPS")
-    Rel(posts, repo, "Uses")
-    Rel(groups, repo, "Uses")
-    Rel(drafts, repo, "Uses")
-    Rel(moderation, repo, "Uses")
-    Rel(summary, repo, "Uses")
-    Rel(repo, db, "SQL", "asyncpg")
+    spa -- "HTTPS/JSON (REST)" --> routers
+    spa -- "WebSocket" --> hub
+    spa -- "Sign-in redirect" --> auth
+    auth -- "OIDC" --> idp
+    routers -- "may this user see/do this?" --> policy
+    hub -- "filter each event per recipient" --> policy
+    routers -- "publish events after writes" --> hub
+    routers -- "read/write" --> repo
+    summary -- "summarize(comments) HTTPS" --> llm
+    repo -- "SQL (asyncpg)" --> db
 ```
 
 ## Responsibilities
@@ -65,3 +55,7 @@ C4Component
 
 The proof of concept (`backend/main.py`) contains a minimal version of the Posts router
 only: Pydantic validation and an in-memory list in place of Repositories.
+
+The five boxes in the inner frame are drawn together because they share the same three
+dependencies (Access Policy, Realtime hub, Repositories); the table above lists each one's
+responsibility separately.
