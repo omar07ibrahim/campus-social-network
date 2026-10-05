@@ -30,6 +30,19 @@ docs/
 See `docs/architecture/repository-structure.md` for the full breakdown (2.5) and the
 Assignment 2 target layout.
 
+## Report PDF
+
+`Report.pdf` (repo root) is the single assembled report required by the submission
+checklist — every section below, in order, with diagrams rendered as images. It's built
+from the same Markdown files listed in the table below (single source of truth per section,
+not duplicated content). Regenerate after editing any section:
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate   # any venv, doesn't need to be backend's
+pip install -r docs/report-requirements.txt && playwright install chromium
+cd docs && python build_report.py
+```
+
 ## Document map (for the oral exam)
 
 | Section | File |
@@ -45,6 +58,7 @@ Assignment 2 target layout.
 | 2.7 ADRs | `docs/architecture/adr/` |
 | Section 3 Project management | `docs/project-management/README.md` |
 | Demo | `docs/demo-script.md` |
+| **Full report (all of the above, as one PDF)** | `Report.pdf` |
 
 ## Running the proof of concept
 
