@@ -36,6 +36,8 @@ suggested order), then built in parallel with a review pass before submission.
 | R3: One member (Aro) blocked on the others' sections for the final report | Low | High | Each lead section is its own file under `docs/`, written independently; Aro assembles, doesn't wait to start until everyone else finishes |
 | R4: AI feature (thread summarization, ADR-02) scoped too ambitiously for Assignment 2's timeline | Medium | Medium | POC explicitly excludes AI integration (see README); Assignment 2 can start with a stubbed/mocked summary before wiring a real LLM call |
 | R5: Oral exam — a member can't explain a part they didn't personally write | Medium | High | Step 6 of the assignment brief: practice session where each member explains every section, not just their own |
+| R6: Appeals process (ADR-01) assumes ≥2 active campus moderators; if only 1 exists, appeals can't be reviewed by a second person | Low | Medium | Flagged in `requirements-review.md`; Assignment 2 can fall back to admin review if moderator pool is 1 |
+| R7: Two collaborator invites (Makar, Teaching Team/prof) still pending acceptance on GitHub as of 2026-10-05 | Medium | High | Follow up directly — repo access for the teaching team is a hard submission requirement (final checklist) |
 
 ## Assignment 2 timeline
 _(Placeholder milestones — Aro/team to confirm real dates against the course schedule.)_
