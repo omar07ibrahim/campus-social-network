@@ -1,36 +1,41 @@
 # ADR-03: Data Storage Approach
 
-- Status: draft (owner Makar — final wording still to review)
-- Owner: Makar
-- Date: 2026-09-29
+- **Status:** Accepted
+- **Owner:** Makar
+- **Date:** 2026-10-05 (first draft 2026-09-29)
+- **Feasibility review:** Omar — fine for the frontend, no direct impact beyond the API contract.
+- **Related:** NFR-2, NFR-5, NFR-9, NFR-12, ADR-01, ADR-04, `diagrams/er-diagram.md`
 
 ## Context
-The Assignment 1 POC keeps posts in memory (see README, "explicitly excluded"). Assignment 2
-needs real persistence for: users, groups, posts, comments, RSVPs/attendance, and moderation
-records (report → hide → decision, ADR-01) that must survive restarts and support appeals.
-Entities are clearly relational: a post belongs to a group and an author, a moderation record
-references a post and a moderator, a comment references a post and an author.
+The POC keeps posts in memory. Assignment 2 needs persistent users, groups, memberships,
+posts, comments, drafts, reports, moderation records, summaries and an audit log. The data
+is strongly linked (post → group → membership → user; moderation record → post → moderator),
+and two rules are critical: a moderation decision must never be half-written (NFR-5), and
+two officers saving the same draft must not overwrite each other (NFR-8).
 
-## Alternatives considered
-1. **Document store (e.g. MongoDB)** — flexible schema, easy to start, but the data is
-   inherently relational (foreign keys everywhere: post→group, post→author, moderation
-   record→post→moderator) and we'd rebuild joins/consistency checks in application code.
-2. **SQLite** — zero ops, fine for the POC, but not realistic for Assignment 2's multi-user,
-   concurrent-write scenario (ADR-04) or for demonstrating a production-plausible architecture.
-3. **PostgreSQL (relational)** — native foreign keys and constraints match the data model
-   directly; transactions give ACID guarantees for moderation decision records (can't lose a
-   decision mid-write); mature FastAPI support (SQLAlchemy/SQLModel + Alembic migrations).
+## Options considered
+1. **Document store (MongoDB)** — flexible schema and quick start, but our data is relational;
+   joins, uniqueness ("one report per user per post") and cross-document consistency would
+   have to be rebuilt in application code.
+2. **SQLite** — zero setup and fine for the POC, but a single writer lock and no managed
+   backups make concurrent drafts (ADR-04) and the recovery target (NFR-9) hard.
+3. **PostgreSQL** — foreign keys, CHECK and UNIQUE constraints express the policies in
+   `er-diagram.md`; transactions make "hide post + write record" atomic; managed hosting gives
+   point-in-time recovery; well supported by FastAPI through SQLModel/SQLAlchemy and Alembic.
 
 ## Decision
-Option 3: PostgreSQL, accessed via SQLAlchemy/SQLModel from FastAPI, with Alembic for schema
-migrations. Not implemented in the Assignment 1 POC (in-memory only, see README); this ADR
-governs the Assignment 2 backend.
+PostgreSQL 16, accessed from FastAPI through SQLModel (SQLAlchemy) with the async `asyncpg`
+driver, and Alembic for migrations. Local development runs Postgres in Docker Compose.
+Not used in the Assignment 1 POC, which deliberately stays in memory (see `docs/poc.md`).
 
 ## Consequences
-- Requires running/hosting a Postgres instance (local Docker container for dev, per Assignment 2).
-- Relational constraints (foreign keys, NOT NULL, unique) enforce data integrity that would
-  otherwise be re-implemented manually in a document store.
-- Schema changes need migrations (Alembic) — more process than a schemaless store, but this
-  is the right trade-off given moderation/appeal records must not silently lose fields.
-- Sets the ER diagram (2.6) and repository structure (2.5) to be table/model-based, not
-  document-collection-based — Makar to keep this consistent across those sections.
+- **Positive:** Policy rules become database constraints (visibility ⇔ group, second
+  moderator ≠ first, unique report), so a bug in one endpoint cannot break them (NFR-5).
+- **Positive:** Optimistic locking for drafts is one conditional `UPDATE … WHERE version = ?`
+  (ADR-04) — no extra infrastructure.
+- **Positive:** Point-in-time recovery on the managed service meets RPO 15 min (NFR-9).
+- **Negative:** Every schema change needs a migration and review; slower than a schemaless store.
+- **Negative:** Team must run Docker for local development; mitigated by one
+  `docker-compose up` command in the A2 README.
+- **Follow-up:** If the live feed (NFR-1) gets slow at pilot scale, add read indexes or a
+  cache before considering a different store.

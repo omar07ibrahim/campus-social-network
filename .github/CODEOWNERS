@@ -1,0 +1,10 @@
+# Each area's lead is requested as reviewer automatically (Section 3.1).
+/backend/                      @triplepiner
+/frontend/                     @omar07ibrahim
+/docs/requirements/            @SalamaAldhaheri @arokurd
+/docs/architecture/            @triplepiner @omar07ibrahim
+/docs/architecture/adr/adr-01* @SalamaAldhaheri
+/docs/architecture/adr/adr-02* @arokurd
+/docs/architecture/adr/adr-03* @triplepiner
+/docs/architecture/adr/adr-04* @omar07ibrahim
+/docs/project-management/      @arokurd

@@ -1,64 +1,90 @@
-# Repository Structure (2.5)
+# 2.5 Code and Repository Structure
 
-> Owners: Makar (backend), Omar (frontend). This documents the actual repo layout as of the
-> Assignment 1 POC, plus what Assignment 2 adds.
+> Lead: Makar, frontend parts with Omar. One repository for code, tests, docs and diagram
+> sources, so the report, the contract and the code are reviewed together.
 
-## Current (Assignment 1 POC)
-
+## Now (Assignment 1)
 ```
 campus-social-network/
-├── README.md                  setup/run instructions, team, POC simplifications
-├── backend/
-│   ├── main.py                 FastAPI app: POST/GET /posts, GET /health
-│   ├── test_main.py            pytest suite (4 tests, run: pytest -q)
-│   └── requirements.txt        fastapi, uvicorn, pytest, httpx
-├── frontend/
-│   ├── index.html               post form + feed
-│   └── app.js                   fetch calls to the backend, matches api-contract.md
+├── README.md                     setup/run instructions, POC simplifications
+├── Report.pdf                    the submitted report, built from docs/
+├── .github/CODEOWNERS            who reviews which area (3.1)
+├── .gitignore                    keeps .env, venvs, caches out of Git
+├── backend/                      Makar
+│   ├── main.py                   FastAPI app: POST/GET /posts, GET /health
+│   ├── test_main.py              pytest suite (8 tests)
+│   └── requirements.txt
+├── frontend/                     Omar
+│   ├── index.html                form + feed
+│   └── app.js                    fetch calls matching api-contract.md Part A
 └── docs/
-    ├── requirements/
-    │   ├── scope.md              1.1 product scope
-    │   ├── stakeholders.md       1.1 stakeholder analysis + conflicts
-    │   ├── functional-requirements.md    1.2
-    │   ├── non-functional-requirements.md 1.3 (+ 2.1 driver ranking)
-    │   ├── user-stories.md       1.4-1.5, traceability matrix
-    │   └── requirements-review.md 1.5
+    ├── requirements/             Salama (1.1–1.3, 2.1), Aro (1.4–1.5)
     ├── architecture/
-    │   ├── api-contract.md       2.4 interface contract (POC)
+    │   ├── api-contract.md       2.4 (Makar)
+    │   ├── behaviour-and-design.md  2.3 (Omar, Makar)
     │   ├── repository-structure.md  2.5 (this file)
-    │   ├── adr/                  2.7 — adr-01..adr-04
-    │   └── diagrams/             2.2-2.3, 2.6 — C4, sequence, ER (Mermaid)
-    └── project-management/
-        └── README.md             Section 3
+    │   ├── adr/                  2.7, one ADR per member
+    │   └── diagrams/             2.2, 2.3, 2.6 — Mermaid sources (editable, render on GitHub)
+    ├── project-management/       Section 3 (Aro)
+    ├── poc.md, demo-script.md    Section 4 (Omar, Makar)
+    └── build_report.py           assembles Report.pdf (Aro)
 ```
 
-## Assignment 2 target (planned, not yet built)
-
+## Assignment 2 target
 ```
 campus-social-network/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py
-│   │   ├── models/              SQLModel/SQLAlchemy models (User, Group, Post, Comment,
-│   │   │                        ModerationRecord, Draft — see er-diagram.md)
-│   │   ├── routers/             posts.py, comments.py, moderation.py, ws.py
-│   │   ├── services/             thread-summarization client (ADR-02)
-│   │   └── db.py
-│   ├── alembic/                 schema migrations (ADR-03)
-│   └── tests/
+│   │   ├── main.py               app factory, routers mounted
+│   │   ├── auth.py               Auth component
+│   │   ├── policy.py             Access Policy (ADR-01) — one file, heavily tested
+│   │   ├── routers/              posts.py, groups.py, drafts.py, moderation.py, summaries.py, ws.py
+│   │   ├── services/             drafts.py, moderation.py, summary.py, llm_adapter.py
+│   │   ├── models/               SQLModel tables matching er-diagram.md
+│   │   ├── repositories/         queries and transactions
+│   │   └── settings.py           reads configuration from environment variables
+│   ├── alembic/                  database migrations (ADR-03)
+│   ├── tests/
+│   │   ├── unit/                 policy, services (LLM and DB mocked)
+│   │   ├── api/                  endpoint tests incl. role × endpoint authorization matrix
+│   │   └── contract/             responses validated against openapi.json
+│   ├── .env.example              variable names only, no values
+│   └── pyproject.toml
 ├── frontend/
 │   ├── src/
-│   │   ├── components/           React components (feed, post form w/ rich text, moderation UI)
-│   │   └── api/                  typed client for the backend contract
+│   │   ├── components/           Feed, PostEditor (rich text), DraftEditor, ModerationQueue, SummaryPanel
+│   │   ├── api/                  typed client generated from openapi.json
+│   │   ├── realtime/             WebSocket client, reconnect + refetch
+│   │   └── pages/
+│   ├── tests/                    component tests (Vitest) + Playwright end-to-end
+│   ├── .env.example              only public values (API base URL)
 │   └── package.json
-└── docs/                        same structure as A1, sections filled in further
+├── shared/
+│   └── openapi.json              exported from FastAPI; the single shared contract
+├── docker-compose.yml            api + postgres + mock identity provider for local dev
+├── .github/workflows/ci.yml      tests, lint, secret scan on every pull request
+└── docs/                         same layout as now
 ```
 
-## Rationale
-- `backend/` and `frontend/` are separate top-level dirs (not a monorepo tool like Nx/Turborepo)
-  — team is 4 people, 2 assignments; that tooling overhead isn't justified yet.
-- `docs/` mirrors the assignment's own section numbering (1.x requirements, 2.x architecture,
-  3.x project management) so any grader — or teammate — can find a section without guessing.
-- Assignment 2's `backend/app/` split (models/routers/services) follows ADR-03 (relational
-  data needs real model classes) and ADR-04 (concurrency logic lives in a service, not
-  scattered across route handlers).
+## How the structure reflects the architecture and the team
+- Top-level folders match the C4 containers: `frontend/` = Web App, `backend/` = Backend API
+  (+ Realtime hub), the database is defined by `backend/app/models` and `alembic/`.
+- Inside `backend/app/`, files match the components in `diagrams/c4-component.md`, so a
+  reviewer can go from diagram box to file directly.
+- The only shared code is the contract: FastAPI exports `openapi.json`, the frontend's API
+  client is generated from it. A contract change shows up as a diff in one file that both
+  Makar and Omar review.
+- `docs/` follows the report's numbering. `.github/CODEOWNERS` maps each folder to its lead,
+  so GitHub requests the right reviewer automatically (Section 3.1).
+
+## Keeping secrets out of the repository and browser code
+- Secrets (database password, LLM API key, OIDC client secret, session signing key) are read
+  from environment variables in `settings.py`. Locally they live in `backend/.env`, which is
+  in `.gitignore`; only `.env.example` with variable names is committed.
+- The browser never receives a secret: LLM and identity-provider calls are made by the
+  backend. The frontend `.env` holds only public values (e.g. API base URL), because anything
+  bundled into JavaScript is readable by users.
+- The session is an `HttpOnly` cookie, so page scripts cannot read it.
+- CI runs a secret scanner (gitleaks) on every pull request; a leaked key is rotated, not just
+  deleted from history.
+- The Assignment 1 POC needs no secrets at all.

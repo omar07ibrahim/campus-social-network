@@ -1,12 +1,14 @@
 from datetime import datetime, timezone
+from typing import Annotated
 from uuid import uuid4
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, StringConstraints
 
 app = FastAPI(title="Campus Social Network - Proof of Concept")
 
+# POC only: any origin may call the API. Assignment 2 restricts this to the frontend's origin.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,10 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Whitespace is stripped before the length check, so "   " counts as empty (422).
+Author = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+Content = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
+
 
 class PostCreate(BaseModel):
-    author: str = Field(..., min_length=1, max_length=100)
-    content: str = Field(..., min_length=1, max_length=1000)
+    author: Author
+    content: Content
 
 
 class Post(PostCreate):

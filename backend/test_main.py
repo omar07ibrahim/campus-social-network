@@ -31,6 +31,32 @@ def test_create_post_missing_content_returns_422():
     assert res.json()["detail"][0]["loc"] == ["body", "content"]
 
 
+def test_whitespace_only_content_returns_422():
+    res = client.post("/posts", json={"author": "Omar", "content": "   "})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["loc"] == ["body", "content"]
+    assert posts == []
+
+
+def test_content_over_1000_chars_returns_422():
+    res = client.post("/posts", json={"author": "Omar", "content": "x" * 1001})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["type"] == "string_too_long"
+
+
+def test_content_is_trimmed():
+    res = client.post("/posts", json={"author": " Makar ", "content": "  hi  "})
+    assert res.status_code == 201
+    assert res.json()["author"] == "Makar"
+    assert res.json()["content"] == "hi"
+
+
+def test_list_posts_empty():
+    res = client.get("/posts")
+    assert res.status_code == 200
+    assert res.json() == []
+
+
 def test_list_posts_newest_first():
     client.post("/posts", json={"author": "Omar", "content": "one"})
     client.post("/posts", json={"author": "Salama", "content": "two"})
