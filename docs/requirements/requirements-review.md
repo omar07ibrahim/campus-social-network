@@ -17,14 +17,14 @@
 ## Contradictions and unclear wording we resolved
 | # | Problem found | Resolution |
 |---|---|---|
-| R-1 | ER diagram used visibility `public`, ADR-01 said "campus-wide" | One vocabulary everywhere: `campus` / `group` |
-| R-2 | Scope listed live updates and rich text as *future*, but Assignment 2 requires them and NFR-4 depends on WebSockets | Moved into the first release (`scope.md`) |
-| R-3 | ADR-01 requires appeals, but the ER model had no field for them | `appeal_*` fields and a CHECK (second moderator ≠ first) added to `MODERATION_RECORD` |
-| R-4 | NFR-4 said reports reach moderators "within 1 minute" while the design pushes them live | Single target: live events within 2 s (p95) |
-| R-5 | FR-9 (group verification) had no story and no owner | US-7 added; policy owned by ADR-01 |
-| R-6 | "Group" and "officer" were undefined | Defined through `GROUP_MEMBERSHIP` with role `member` / `officer` |
-| R-7 | US-1 says empty posts are rejected, but the POC accepted content of only spaces | Backend trims before validating; test added |
-| R-8 | No requirement covered identity, joining groups, live updates or appeals, though the brief lists them | FR-11 … FR-15 and US-8 … US-10 added |
+| V-1 | ER diagram used visibility `public`, ADR-01 said "campus-wide" | One vocabulary everywhere: `campus` / `group` |
+| V-2 | Scope listed live updates and rich text as *future*, but Assignment 2 requires them and NFR-4 depends on WebSockets | Moved into the first release (`scope.md`) |
+| V-3 | ADR-01 requires appeals, but the ER model had no field for them | `appeal_*` fields and a CHECK (second moderator ≠ first) added to `MODERATION_RECORD` |
+| V-4 | NFR-4 said reports reach moderators "within 1 minute" while the design pushes them live | Single target: live events within 2 s (p95) |
+| V-5 | FR-9 (group verification) had no story and no owner | US-7 added; policy owned by ADR-01 |
+| V-6 | "Group" and "officer" were undefined | Defined through `GROUP_MEMBERSHIP` with role `member` / `officer` |
+| V-7 | US-1 says empty posts are rejected, but the POC accepted content of only spaces | Backend trims before validating; test added |
+| V-8 | No requirement covered identity, joining groups, live updates or appeals, though the brief lists them | FR-11 … FR-15 and US-8 … US-10 added |
 
 ## Assumptions
 | ID | Assumption | If wrong |

@@ -1,7 +1,7 @@
 # Product Scope
 
 > Lead: Salama. Agreed by the whole team on 2026-09-29 (Step 1 of the brief), revised
-> 2026-10-05 after the requirements review (see `requirements-review.md`, R-2).
+> 2026-10-05 after the requirements review (see `requirements-review.md`, V-2).
 
 ## Product name
 **CampusConnect** — a social network for the MBZUAI community.
