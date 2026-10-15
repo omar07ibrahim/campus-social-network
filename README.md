@@ -7,6 +7,9 @@ editable diagram sources and a proof of concept of one interaction: **creating a
 
 **The submitted report is [`Report.pdf`](Report.pdf).**
 
+**Proof-of-concept demo video (2:25):** [`docs/demo/CampusConnect_POC_demo.mp4`](docs/demo/CampusConnect_POC_demo.mp4)
+(subtitles burned in; separate file: [`CampusConnect_POC_demo.srt`](docs/demo/CampusConnect_POC_demo.srt)).
+
 ## Team
 
 | Member | GitHub | Lead role |
@@ -67,7 +70,7 @@ Full table with reasons: [`docs/poc.md`](docs/poc.md).
 | 2.6 Data model | `docs/architecture/diagrams/er-diagram.md` |
 | 2.7 ADRs | `docs/architecture/adr/` |
 | 3 Project management | `docs/project-management/README.md` |
-| 4 Proof of concept | `docs/poc.md`, `docs/architecture/diagrams/sequence-create-post.md`, `docs/demo-script.md` |
+| 4 Proof of concept | `docs/poc.md`, `docs/architecture/diagrams/sequence-create-post.md`, `docs/demo-script.md`, `docs/demo/` (video) |
 
 Diagrams are Mermaid source inside these Markdown files (editable as text, rendered by
 GitHub and in the PDF).
