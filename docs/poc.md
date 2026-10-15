@@ -17,6 +17,7 @@ input returns 422 and the page shows a readable error.
 | Contract | `docs/architecture/api-contract.md` Part A | Makar & Omar |
 | Run instructions | `README.md` | Omar |
 | Demo plan | `docs/demo-script.md` | Omar |
+| Demo video (2:25, subtitled) | `docs/demo/CampusConnect_POC_demo.mp4` | Makar |
 
 ## Request and response match the contract
 - Request `{author, content}` and the 201 body `{id, author, content, created_at}` are the

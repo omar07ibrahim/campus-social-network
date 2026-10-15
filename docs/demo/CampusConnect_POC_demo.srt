@@ -1,0 +1,139 @@
+1
+00:00:00,000 --> 00:00:05,900
+Hi, we're team CampusConnect: Salama, Aro, Makar and Omar.
+
+2
+00:00:06,220 --> 00:00:09,860
+CampusConnect is a social network for the MBZUAI community,
+
+3
+00:00:09,860 --> 00:00:12,400
+where students and groups share updates in one feed.
+
+4
+00:00:12,600 --> 00:00:16,100
+This proof of concept shows one interaction end to end: creating a post.
+
+5
+00:00:16,340 --> 00:00:19,200
+The browser sends POST /posts,
+
+6
+00:00:19,320 --> 00:00:22,800
+FastAPI validates it, and the post appears in the feed.
+
+7
+00:00:24,460 --> 00:00:28,600
+You can see that when we refresh, it's blank.
+
+8
+00:00:29,120 --> 00:00:32,200
+So the feed is empty. On load, the page calls GET /posts,
+
+9
+00:00:32,200 --> 00:00:35,700
+gets an empty list, and shows no error.
+
+10
+00:00:35,900 --> 00:00:39,060
+Now let's create a post. You can see we created this post,
+
+11
+00:00:39,060 --> 00:00:42,200
+and when we refresh, it's still there.
+
+12
+00:00:42,580 --> 00:00:44,900
+The backend returns 201 Created.
+
+13
+00:00:44,900 --> 00:00:50,560
+Let's add another post. As you can see, the newer post is on top,
+
+14
+00:00:50,560 --> 00:00:55,300
+and no posts disappear when we refresh, because they're in the backend.
+
+15
+00:00:55,640 --> 00:00:59,800
+Now if we try blank spaces, it shows us an error:
+
+16
+00:01:00,060 --> 00:01:05,000
+a 422 error. The string should have at least one character.
+
+17
+00:01:07,400 --> 00:01:10,400
+So nothing is stored.
+
+18
+00:01:10,400 --> 00:01:14,600
+We found this gap during the requirements review and fixed it with a test.
+
+19
+00:01:18,460 --> 00:01:21,900
+Now let's move on to the docs.
+
+20
+00:01:22,580 --> 00:01:24,500
+This is our API contract.
+
+21
+00:01:24,620 --> 00:01:28,000
+The request has an author of up to 100 characters
+
+22
+00:01:28,000 --> 00:01:31,000
+and content of up to 1,000.
+
+23
+00:01:31,000 --> 00:01:36,200
+The 201 response adds an id and created_at.
+
+24
+00:01:39,000 --> 00:01:42,800
+Errors use FastAPI's standard 422 shape, which the frontend reads.
+
+25
+00:01:43,660 --> 00:01:47,180
+The schema is generated from the same Pydantic models as the code,
+
+26
+00:01:47,180 --> 00:01:50,900
+and eight backend tests check status codes, ordering and error shapes.
+
+27
+00:01:51,280 --> 00:01:53,600
+The POC is deliberately small.
+
+28
+00:01:53,740 --> 00:01:59,100
+We use plain HTML and JavaScript instead of React.
+
+29
+00:01:59,500 --> 00:02:03,800
+There's no sign-in, so the author is free text.
+
+30
+00:02:03,800 --> 00:02:07,860
+Posts live in memory instead of PostgreSQL, and every post is public.
+
+31
+00:02:07,860 --> 00:02:11,720
+In Assignment 2 we add university sign-in, PostgreSQL,
+
+32
+00:02:11,720 --> 00:02:16,280
+groups with audience control, live updates over WebSockets, moderation
+
+33
+00:02:16,280 --> 00:02:19,000
+and AI thread summaries.
+
+34
+00:02:19,000 --> 00:02:22,200
+Setup instructions are in the README on GitHub.
+
+35
+00:02:22,300 --> 00:02:24,500
+Thank you!
